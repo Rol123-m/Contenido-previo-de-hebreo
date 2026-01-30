@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vocabulario Básico Hebreo - Flashcards</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Variables CSS consistentes */
+    :root {
+      --primary: #4A6FA5;
+      --primary-dark: #2A4A7A;
+      --secondary: #8B5FBF;
+      --secondary-dark: #6A3FA0;
+      --success: #2ECC71;
+      --danger: #E74C3C;
+      --warning: #F1C40F;
+      --light: #F8F9FA;
+      --dark: #2C3E50;
+      --gray-light: #ECF0F1;
+      
+      --gradient-primary: linear-gradient(135deg, #4A6FA5 0%, #8B5FBF 100%);
+      --gradient-dark: linear-gradient(135deg, #2C3E50 0%, #34495E 100%);
+      --gradient-success: linear-gradient(135deg, #2ECC71 0%, #27AE60 100%);
+      --gradient-warning: linear-gradient(135deg, #F1C40F 0%, #F39C12 100%);
+      
+      --shadow-sm: 0 4px 6px rgba(0,0,0,0.07);
+      --shadow-md: 0 8px 15px rgba(0,0,0,0.1);
+      --shadow-lg: 0 15px 30px rgba(0,0,0,0.15);
+      --shadow-xl: 0 20px 40px rgba(0,0,0,0.2);
+      
+      --radius: 12px;
+      --radius-lg: 20px;
+      --radius-sm: 8px;
+      
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    /* Reset y estilos base */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%);
+      color: var(--dark);
+      line-height: 1.7;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    /* Header */
+    .vocab-header {
+      background: var(--gradient-dark);
+      color: white;
+      padding: 30px;
+      border-radius: var(--radius-lg);
+      margin-bottom: 30px;
+      box-shadow: var(--shadow-lg);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .vocab-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: var(--gradient-primary);
+    }
+
+    .vocab-header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.9) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .vocab-header p {
+      opacity: 0.9;
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Estadísticas */
+    .vocab-stats {
+      display: flex;
+      justify-content: space-around;
+      background: white;
+      padding: 20px;
+      border-radius: var(--radius);
+      margin-bottom: 30px;
+      box-shadow: var(--shadow-md);
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .stat-box {
+      text-align: center;
+      flex: 1;
+      min-width: 120px;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: var(--dark);
+      opacity: 0.8;
+      margin-top: 5px;
+    }
+
+    /* Contenedor principal */
+    .vocab-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Grid de flashcards */
+    .flashcards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 25px;
+      margin-bottom: 40px;
+    }
+
+    /* Flashcard individual */
+    .flashcard {
+      height: 200px;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+
+    .flashcard-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+
+    .flashcard.flipped .flashcard-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flashcard-front, .flashcard-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 25px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .flashcard-front {
+      background: var(--gradient-primary);
+      color: white;
+    }
+
+    .flashcard-back {
+      background: white;
+      color: var(--dark);
+      transform: rotateY(180deg);
+      border: 3px solid var(--primary);
+      text-align: center;
+    }
+
+    /* Contenido de las flashcards */
+    .hebrew-word {
+      font-family: 'Times New Roman', serif;
+      font-size: 3.5rem;
+      font-weight: bold;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .transliteration {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 5px;
+    }
+
+    .card-label {
+      font-size: 0.9rem;
+      opacity: 0.8;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .translation {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 15px;
+    }
+
+    .part-of-speech {
+      display: inline-block;
+      padding: 5px 15px;
+      background: var(--gradient-primary);
+      color: white;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .example {
+      font-size: 1.1rem;
+      color: var(--dark);
+      opacity: 0.9;
+      font-style: italic;
+      text-align: center;
+    }
+
+    /* Indicador de volteo */
+    .flip-indicator {
+      position: absolute;
+      bottom: 15px;
+      right: 15px;
+      background: rgba(255, 255, 255, 0.2);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    /* Controles */
+    .vocab-controls {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+
+    .control-btn {
+      padding: 15px 30px;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .control-btn.primary {
+      background: var(--gradient-primary);
+      color: white;
+    }
+
+    .control-btn.secondary {
+      background: var(--gray-light);
+      color: var(--dark);
+    }
+
+    .control-btn.success {
+      background: var(--gradient-success);
+      color: white;
+    }
+
+    .control-btn.warning {
+      background: var(--gradient-warning);
+      color: var(--dark);
+    }
+
+    .control-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .control-btn:active {
+      transform: translateY(-1px);
+    }
+
+    /* Footer */
+    .vocab-footer {
+      text-align: center;
+      padding: 30px;
+      color: var(--dark);
+      opacity: 0.8;
+      font-size: 0.9rem;
+      margin-top: 40px;
+    }
+
+    /* Modal de progreso */
+    .progress-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+    }
+
+    .progress-modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 40px;
+      border-radius: var(--radius-lg);
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      box-shadow: var(--shadow-xl);
+      transform: translateY(-20px);
+      transition: transform 0.3s ease;
+    }
+
+    .progress-modal.active .modal-content {
+      transform: translateY(0);
+    }
+
+    .modal-content h2 {
+      color: var(--primary-dark);
+      margin-bottom: 20px;
+    }
+
+    .progress-bar {
+      height: 10px;
+      background: var(--gray-light);
+      border-radius: 5px;
+      margin: 20px 0;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--gradient-primary);
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+
+    /* Responsive */
+    @media (max-width: 1100px) {
+      .flashcards-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .vocab-header h1 {
+        font-size: 2rem;
+      }
+      
+      .vocab-header {
+        padding: 20px;
+      }
+      
+      .flashcards-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+      }
+      
+      .hebrew-word {
+        font-size: 3rem;
+      }
+      
+      .translation {
+        font-size: 1.8rem;
+      }
+      
+      .control-btn {
+        padding: 12px 20px;
+        font-size: 1rem;
+      }
+      
+      .vocab-stats {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+      
+      .flashcards-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .flashcard {
+        height: 180px;
+      }
+      
+      .hebrew-word {
+        font-size: 2.5rem;
+      }
+      
+      .translation {
+        font-size: 1.5rem;
+      }
+      
+      .vocab-controls {
+        flex-direction: column;
+      }
+      
+      .control-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    /* Animación para nuevas palabras aprendidas */
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .new-word {
+      animation: pulse 0.5s ease;
+    }
+
+    /* Estilo para palabras dominadas */
+    .mastered .flashcard-front {
+      background: var(--gradient-success);
+    }
+
+    /* Scrollbar personalizada */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--gray-light);
+      border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--gradient-primary);
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <header class="vocab-header">
+    <h1><i class="fas fa-star-of-david"></i> Vocabulario Básico Hebreo</h1>
+    <p>10 palabras esenciales del hebreo bíblico - Haz clic en cada tarjeta para voltearla y aprender</p>
+  </header>
+
+  <div class="vocab-container">
+    <div class="vocab-stats">
+      <div class="stat-box">
+        <div class="stat-number" id="total-cards">10</div>
+        <div class="stat-label">Palabras</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number" id="viewed-cards">0</div>
+        <div class="stat-label">Vistas</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number" id="mastered-cards">0</div>
+        <div class="stat-label">Dominadas</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number" id="progress">0%</div>
+        <div class="stat-label">Progreso</div>
+      </div>
+    </div>
+
+    <div class="flashcards-grid" id="flashcards-container">
+      <!-- Las flashcards se generarán automáticamente con JavaScript -->
+    </div>
+
+    <div class="vocab-controls">
+      <button class="control-btn primary" onclick="flipAllCards()">
+        <i class="fas fa-sync-alt"></i> Voltear Todas
+      </button>
+      <button class="control-btn secondary" onclick="resetAllCards()">
+        <i class="fas fa-redo"></i> Reiniciar Todas
+      </button>
+      <button class="control-btn success" onclick="markAllAsMastered()">
+        <i class="fas fa-check-double"></i> Marcar Todas como Dominadas
+      </button>
+      <button class="control-btn warning" onclick="showProgress()">
+        <i class="fas fa-chart-line"></i> Ver Progreso
+      </button>
+    </div>
+  </div>
+
+  <div class="vocab-footer">
+    <p>Ministerio "Vivos para Servir" - Curso de Hebreo Bíblico © 2026</p>
+    <p>Practica estas 10 palabras básicas para comenzar tu aprendizaje del hebreo bíblico</p>
+  </div>
+
+  <!-- Modal de progreso -->
+  <div class="progress-modal" id="progressModal">
+    <div class="modal-content">
+      <h2><i class="fas fa-trophy"></i> Tu Progreso</h2>
+      <p>Has aprendido <span id="progress-count">0</span> de 10 palabras</p>
+      
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-bar-fill"></div>
+      </div>
+      
+      <p id="progress-message">¡Sigue practicando!</p>
+      
+      <button class="control-btn primary" onclick="closeProgressModal()" style="margin-top: 20px;">
+        <i class="fas fa-times"></i> Cerrar
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // ===================== DATOS DEL VOCABULARIO =====================
+    const vocabulary = [
+      {
+        id: 1,
+        hebrew: "אֱלֹהִים",
+        transliteration: "Elohim",
+        translation: "Dios",
+        partOfSpeech: "Sustantivo",
+        example: "בְּרֵאשִׁית בָּרָא אֱלֹהִים (En el principio, Dios creó)",
+        category: "Teología"
+      },
+      {
+        id: 2,
+        hebrew: "שָׁלוֹם",
+        transliteration: "Shalom",
+        translation: "Paz",
+        partOfSpeech: "Sustantivo",
+        example: "שָׁלוֹם עֲלֵיכֶם (La paz sea con ustedes)",
+        category: "Saludos"
+      },
+      {
+        id: 3,
+        hebrew: "אָדָם",
+        transliteration: "Adam",
+        translation: "Hombre/Humanidad",
+        partOfSpeech: "Sustantivo",
+        example: "וַיִּבְרָא אֱלֹהִים אֶת הָאָדָם (Y Dios creó al hombre)",
+        category: "Creación"
+      },
+      {
+        id: 4,
+        hebrew: "אִשָּׁה",
+        transliteration: "Ishah",
+        translation: "Mujer",
+        partOfSpeech: "Sustantivo",
+        example: "וַיִּבֶן יְהוָה אֱלֹהִים אֶת הַצֵּלָע לְאִשָּׁה (Y Dios construyó la costilla en mujer)",
+        category: "Creación"
+      },
+      {
+        id: 5,
+        hebrew: "מַיִם",
+        transliteration: "Mayim",
+        translation: "Agua",
+        partOfSpeech: "Sustantivo",
+        example: "וְרוּחַ אֱלֹהִים מְרַחֶפֶת עַל פְּנֵי הַמָּיִם (Y el Espíritu de Dios se movía sobre la superficie de las aguas)",
+        category: "Naturaleza"
+      },
+      {
+        id: 6,
+        hebrew: "אוֹר",
+        transliteration: "Or",
+        translation: "Luz",
+        partOfSpeech: "Sustantivo",
+        example: "וַיֹּאמֶר אֱלֹהִים יְהִי אוֹר (Y Dios dijo: Sea la luz)",
+        category: "Creación"
+      },
+      {
+        id: 7,
+        hebrew: "אֶרֶץ",
+        transliteration: "Erets",
+        translation: "Tierra",
+        partOfSpeech: "Sustantivo",
+        example: "בְּרֵאשִׁית בָּרָא אֱלֹהִים אֵת הַשָּׁמַיִם וְאֵת הָאָרֶץ (En el principio, Dios creó los cielos y la tierra)",
+        category: "Creación"
+      },
+      {
+        id: 8,
+        hebrew: "אַהֲבָה",
+        transliteration: "Ahavah",
+        translation: "Amor",
+        partOfSpeech: "Sustantivo",
+        example: "וְאָהַבְתָּ לְרֵעֲךָ כָּמוֹךָ (Amarás a tu prójimo como a ti mismo)",
+        category: "Virtudes"
+      },
+      {
+        id: 9,
+        hebrew: "סֵפֶר",
+        transliteration: "Sefer",
+        translation: "Libro",
+        partOfSpeech: "Sustantivo",
+        example: "סֵפֶר בְּרֵאשִׁית (El libro de Génesis)",
+        category: "Cultura"
+      },
+      {
+        id: 10,
+        hebrew: "דָּבָר",
+        transliteration: "Davar",
+        translation: "Palabra/Cosa",
+        partOfSpeech: "Sustantivo",
+        example: "בְּרֵאשִׁית הָיָה הַדָּבָר (En el principio era el Verbo)",
+        category: "Lenguaje"
+      }
+    ];
+
+    // ===================== VARIABLES GLOBALES =====================
+    let viewedCards = new Set();
+    let masteredCards = new Set();
+    let userProgress = {};
+
+    // ===================== INICIALIZACIÓN =====================
+    document.addEventListener('DOMContentLoaded', function() {
+      renderFlashcards();
+      updateStats();
+    });
+
+    // ===================== RENDERIZAR FLASHCARDS =====================
+    function renderFlashcards() {
+      const container = document.getElementById('flashcards-container');
+      container.innerHTML = '';
+      
+      vocabulary.forEach(word => {
+        const card = document.createElement('div');
+        card.className = 'flashcard';
+        card.dataset.id = word.id;
+        
+        // Verificar si la palabra está dominada
+        if (masteredCards.has(word.id)) {
+          card.classList.add('mastered');
+        }
+        
+        card.innerHTML = `
+          <div class="flashcard-inner">
+            <div class="flashcard-front">
+              <div class="hebrew-word">${word.hebrew}</div>
+              <div class="transliteration">${word.transliteration}</div>
+              <div class="card-label">Haz clic para voltear</div>
+              <div class="flip-indicator">
+                <i class="fas fa-sync-alt"></i>
+              </div>
+            </div>
+            <div class="flashcard-back">
+              <div class="part-of-speech">${word.partOfSpeech}</div>
+              <div class="translation">${word.translation}</div>
+              <div class="example">"${word.example}"</div>
+              <div class="card-label">${word.category}</div>
+            </div>
+          </div>
+        `;
+        
+        // Agregar evento de clic para voltear
+        card.addEventListener('click', function() {
+          this.classList.toggle('flipped');
+          
+          // Marcar como vista
+          const wordId = parseInt(this.dataset.id);
+          viewedCards.add(wordId);
+          
+          // Agregar animación
+          this.classList.add('new-word');
+          setTimeout(() => {
+            this.classList.remove('new-word');
+          }, 500);
+          
+          updateStats();
+        });
+        
+        container.appendChild(card);
+      });
+    }
+
+    // ===================== ACTUALIZAR ESTADÍSTICAS =====================
+    function updateStats() {
+      // Actualizar contadores
+      document.getElementById('viewed-cards').textContent = viewedCards.size;
+      document.getElementById('mastered-cards').textContent = masteredCards.size;
+      
+      // Calcular progreso
+      const progress = Math.round((masteredCards.size / vocabulary.length) * 100);
+      document.getElementById('progress').textContent = `${progress}%`;
+      
+      // Actualizar barra de progreso en el modal
+      document.getElementById('progress-bar-fill').style.width = `${progress}%`;
+      document.getElementById('progress-count').textContent = masteredCards.size;
+      
+      // Actualizar mensaje de progreso
+      const messageElement = document.getElementById('progress-message');
+      if (progress === 100) {
+        messageElement.textContent = "¡Excelente! Has dominado todas las palabras.";
+        messageElement.style.color = "var(--success)";
+      } else if (progress >= 70) {
+        messageElement.textContent = "¡Muy bien! Vas por buen camino.";
+        messageElement.style.color = "var(--success)";
+      } else if (progress >= 40) {
+        messageElement.textContent = "¡Buen trabajo! Sigue practicando.";
+        messageElement.style.color = "#F39C12";
+      } else {
+        messageElement.textContent = "¡Sigue practicando! Puedes hacerlo.";
+        messageElement.style.color = "#E74C3C";
+      }
+    }
+
+    // ===================== FUNCIONES DE CONTROL =====================
+    function flipAllCards() {
+      const cards = document.querySelectorAll('.flashcard');
+      cards.forEach(card => {
+        card.classList.add('flipped');
+        
+        // Marcar como vista
+        const wordId = parseInt(card.dataset.id);
+        viewedCards.add(wordId);
+      });
+      updateStats();
+    }
+
+    function resetAllCards() {
+      const cards = document.querySelectorAll('.flashcard');
+      cards.forEach(card => {
+        card.classList.remove('flipped');
+        card.classList.remove('mastered');
+      });
+      
+      // Limpiar estadísticas
+      viewedCards.clear();
+      masteredCards.clear();
+      
+      updateStats();
+      renderFlashcards(); // Re-render para quitar clase 'mastered'
+    }
+
+    function markAllAsMastered() {
+      vocabulary.forEach(word => {
+        masteredCards.add(word.id);
+        viewedCards.add(word.id);
+      });
+      
+      // Agregar clase 'mastered' a todas las tarjetas
+      const cards = document.querySelectorAll('.flashcard');
+      cards.forEach(card => {
+        card.classList.add('mastered');
+      });
+      
+      updateStats();
+      
+      // Mostrar mensaje de éxito
+      alert('¡Felicidades! Has marcado todas las palabras como dominadas.');
+    }
+
+    function showProgress() {
+      const modal = document.getElementById('progressModal');
+      modal.classList.add('active');
+      
+      // Calcular estadísticas detalladas
+      const progressDetails = {
+        total: vocabulary.length,
+        viewed: viewedCards.size,
+        mastered: masteredCards.size,
+        remaining: vocabulary.length - masteredCards.size
+      };
+      
+      // Actualizar el modal con información detallada
+      const modalContent = modal.querySelector('.modal-content');
+      
+      // Si ya existe información detallada, removerla
+      const existingDetails = modalContent.querySelector('.progress-details');
+      if (existingDetails) {
+        existingDetails.remove();
+      }
+      
+      // Crear elemento con detalles
+      const detailsElement = document.createElement('div');
+      detailsElement.className = 'progress-details';
+      detailsElement.style.marginTop = '20px';
+      detailsElement.style.textAlign = 'left';
+      detailsElement.innerHTML = `
+        <h3 style="color: var(--primary-dark); margin-bottom: 10px;">Detalles:</h3>
+        <p><strong>Palabras vistas:</strong> ${progressDetails.viewed}/${progressDetails.total}</p>
+        <p><strong>Palabras dominadas:</strong> ${progressDetails.mastered}</p>
+        <p><strong>Palabras por aprender:</strong> ${progressDetails.remaining}</p>
+      `;
+      
+      modalContent.insertBefore(detailsElement, modalContent.querySelector('button'));
+    }
+
+    function closeProgressModal() {
+      const modal = document.getElementById('progressModal');
+      modal.classList.remove('active');
+    }
+
+    // ===================== EVENTOS ADICIONALES =====================
+    
+    // Cerrar modal con ESC
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        closeProgressModal();
+      }
+    });
+
+    // Cerrar modal haciendo clic fuera del contenido
+    document.getElementById('progressModal').addEventListener('click', function(event) {
+      if (event.target === this) {
+        closeProgressModal();
+      }
+    });
+
+    // Función para marcar/desmarcar como dominada con doble clic
+    document.addEventListener('dblclick', function(event) {
+      const card = event.target.closest('.flashcard');
+      if (card) {
+        const wordId = parseInt(card.dataset.id);
+        
+        if (masteredCards.has(wordId)) {
+          masteredCards.delete(wordId);
+          card.classList.remove('mastered');
+        } else {
+          masteredCards.add(wordId);
+          card.classList.add('mastered');
+          
+          // Efecto visual
+          card.style.transform = 'scale(1.05)';
+          setTimeout(() => {
+            card.style.transform = 'scale(1)';
+          }, 300);
+        }
+        
+        updateStats();
+        
+        // Mostrar mensaje
+        const word = vocabulary.find(w => w.id === wordId);
+        const status = masteredCards.has(wordId) ? 'dominada' : 'no dominada';
+        console.log(`Palabra "${word.translation}" marcada como ${status}`);
+      }
+    });
+
+    // ===================== INICIALIZACIÓN FINAL =====================
+    // Inicializar estadísticas
+    updateStats();
+    
+    // Mensaje de bienvenida
+    setTimeout(() => {
+      console.log('¡Bienvenido al vocabulario de hebreo bíblico!');
+      console.log('Instrucciones:');
+      console.log('1. Haz clic en una tarjeta para voltearla');
+      console.log('2. Haz doble clic para marcar/desmarcar como dominada');
+      console.log('3. Usa los botones de control para acciones masivas');
+    }, 1000);
+  </script>
+</body>
+</html>
